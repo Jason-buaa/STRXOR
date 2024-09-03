@@ -64,3 +64,22 @@ export function logMessage(message) {
 
   return message;
 }
+
+function hexToBigInt(hexString) {
+  return BigInt(`0x${hexString}`);
+}
+
+/**
+ * Calculate XOR results
+ * @customfunction
+ * @param {string} hex1 First number
+ * @param {string} hex2 Second number
+ * @returns {string} The XOR results of the two numbers.
+ */
+
+export function STRXOR(hex1, hex2) {
+  const bigInt1 = hexToBigInt(hex1);
+  const bigInt2 = hexToBigInt(hex2);
+  const xorResult = bigInt1 ^ bigInt2;
+  return xorResult.toString(16).toUpperCase();
+}
