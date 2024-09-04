@@ -6,6 +6,23 @@
 /* global console, document, Excel, Office */
 
 // The initialize function must be run each time a new page is loaded
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  var file = event.target.files[0]; // 获取用户选择的文件
+  if (!file) {
+      return;
+  }
+
+  var reader = new FileReader(); // 创建FileReader对象
+  reader.readAsText(file); // 以文本形式读取文件
+  reader.onload = function(e) {
+      var content = e.target.result; // 读取文件内容
+      console.log(content); // 打印到控制台
+      // 这里可以对content进行进一步处理，例如显示在页面上或发送到服务器
+  };
+
+});
+
+
 Office.onReady(() => {
   document.getElementById("app-body").style.display = "flex";
   document.getElementById("run").onclick = run;
