@@ -7,6 +7,7 @@
 
 // The initialize function must be run each time a new page is loaded
 let binaryStrings;
+let logContent;
 
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -18,14 +19,28 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
   var reader = new FileReader(); // 创建FileReader对象
   reader.readAsText(file); // 以文本形式读取文件
   reader.onload = function(e) {
-      var content = e.target.result; // 读取文件内容
-      console.log(content); // 打印到控制台
-      let hexData = extractAllHexData(content);
-      console.log(hexData);
+  //var content = e.target.result; // 读取文件内容
+  logContent= e.target.result; // 读取文件内容
+      // 运行提取并分组函数
+  const groupedData = extractAndGroupById(logContent);
+
+    // 输出结果
+    for (const id in groupedData) {
+        console.log(`CAN ID: ${id}`);
+        groupedData[id].forEach(entry => {
+            console.log(`  Time: ${entry.time}, Data: ${entry.data}`);
+        });
+    }
+
+
+
+      //console.log(content); // 打印到控制台
+      //let hexData = extractAllHexData(content);
+      //console.log(hexData);
       // 转换为反序的二进制字符串数组
-      binaryStrings = hexData.map(hexString => hexStringToReversedBinary(hexString));
+      //binaryStrings = hexData.map(hexString => hexStringToReversedBinary(hexString));
       // 输出32位的反序二进制字符串数组
-      console.log(binaryStrings);
+      //console.log(binaryStrings);
       // 这里可以对content进行进一步处理，例如显示在页面上或发送到服务器
   };
 
@@ -249,4 +264,29 @@ function splitStringIntoSubarrays(str) {
   // 使用map方法将每个分割后的字符串放入一个单独的数组中
   let subarrays = numbersArray.map(number => [number]);
   return subarrays;
+}
+
+// 函数：过滤并提取时间序列数据，并按照ID分组
+function extractAndGroupById(log) {
+  const lines = log.trim().split('\n');  // 按行分割日志内容
+  const groupedById = {};
+
+  lines.forEach(line => {
+      // 使用正则表达式匹配有效的CAN Bus日志数据行
+      const match = line.match(/^\s*([\d.]+)\s+1\s+([\dA-F]+)\s+Rx\s+d\s+\d\s+([\dA-F\s]+)/i);
+      if (match) {
+          const time = parseFloat(match[1]);  // 提取时间戳
+          const id = match[2];                // 提取CAN ID
+          const data = match[3].trim();       // 提取数据字段
+
+          // 如果该ID还没有记录，初始化一个空数组
+          if (!groupedById[id]) {
+              groupedById[id] = [];
+          }
+          // 将该条数据添加到对应ID的数组中
+          groupedById[id].push({ time, data });
+      }
+  });
+
+  return groupedById;
 }
