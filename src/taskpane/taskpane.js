@@ -8,6 +8,7 @@
 // The initialize function must be run each time a new page is loaded
 let binaryStrings;
 let logContent;
+let groupedData;
 
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -22,7 +23,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
   //var content = e.target.result; // 读取文件内容
   logContent= e.target.result; // 读取文件内容
       // 运行提取并分组函数
-  const groupedData = extractAndGroupById(logContent);
+  groupedData = extractAndGroupById(logContent);
 
     // 输出结果
     for (const id in groupedData) {
