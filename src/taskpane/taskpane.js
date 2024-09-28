@@ -23,17 +23,19 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
   //var content = e.target.result; // 读取文件内容
   logContent= e.target.result; // 读取文件内容
       // 运行提取并分组函数
-  groupedData = extractAndGroupById(logContent);
-
-    // 输出结果
-    for (const id in groupedData) {
-        console.log(`CAN ID: ${id}`);
-        groupedData[id].forEach(entry => {
-            console.log(`  Time: ${entry.time}, Data: ${entry.data}`);
-        });
-    }
-
-
+      console.time("Processing log");
+      groupedData = extractAndGroupById(logContent);
+      console.timeEnd("Processing log");
+      
+      const ids = Object.keys(groupedData);
+      console.log("Extracted IDs:", ids);
+// Assuming groupedData is already populated
+      Object.keys(groupedData).forEach(id => {
+        const firstEntry = groupedData[id][0];  // Access the first entry of each ID
+        if (firstEntry) {
+            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}`);
+        }
+      });
 
       //console.log(content); // 打印到控制台
       //let hexData = extractAllHexData(content);
