@@ -33,7 +33,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
       Object.keys(groupedData).forEach(id => {
         const firstEntry = groupedData[id][0];  // Access the first entry of each ID
         if (firstEntry) {
-            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}`);
+            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}, DataLength: ${firstEntry.data.length}`);
         }
       });
 
@@ -280,7 +280,7 @@ function extractAndGroupById(log) {
       if (match) {
           const time = parseFloat(match[1]);  // 提取时间戳
           const id = match[2];                // 提取CAN ID
-          const data = match[3].trim();       // 提取数据字段
+          const data = match[3].trim().replace(/\s+/g, '');       // 提取数据字段
 
           // 如果该ID还没有记录，初始化一个空数组
           if (!groupedById[id]) {
@@ -292,4 +292,22 @@ function extractAndGroupById(log) {
   });
 
   return groupedById;
+}
+
+function hexToBinary(hexStr) {
+  let binaryStr = '';
+  
+  // 每两个字符表示一个字节，因此按字节对字符串进行分割并倒序
+  for (let i = hexStr.length - 2; i >= 0; i -= 2) {
+      // 提取每个字节（两个16进制字符）
+      let byte = hexStr.slice(i, i + 2);
+      
+      // 将字节转换为二进制并且填充为8位
+      let bin = parseInt(byte, 16).toString(2).padStart(8, '0');
+      
+      // 拼接到最终的二进制字符串中
+      binaryStr += bin;
+  }
+  
+  return binaryStr;
 }
