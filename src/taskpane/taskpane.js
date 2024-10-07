@@ -33,7 +33,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
       Object.keys(groupedData).forEach(id => {
         const firstEntry = groupedData[id][0];  // Access the first entry of each ID
         if (firstEntry) {
-            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${hexToBinary(firstEntry.data)}, DataLength: ${firstEntry.data.length}`);
+            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}, DataLength: ${firstEntry.data.length}`);
         }
       });
 
@@ -280,7 +280,7 @@ function extractAndGroupById(log) {
       if (match) {
           const time = parseFloat(match[1]);  // 提取时间戳
           const id = match[2];                // 提取CAN ID
-          const data = match[3].trim().replace(/\s+/g, '');       // 提取数据字段
+          const data = hexToBinary(match[3].trim().replace(/\s+/g, ''));       // 提取数据字段
 
           // 如果该ID还没有记录，初始化一个空数组
           if (!groupedById[id]) {
