@@ -33,7 +33,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
       Object.keys(groupedData).forEach(id => {
         const firstEntry = groupedData[id][0];  // Access the first entry of each ID
         if (firstEntry) {
-            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}, DataLength: ${firstEntry.data.length}`);
+            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${hexToBinary(firstEntry.data)}, DataLength: ${firstEntry.data.length}`);
         }
       });
 
