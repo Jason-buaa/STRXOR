@@ -31,20 +31,11 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
       console.log("Extracted IDs:", ids);
 // Assuming groupedData is already populated
       Object.keys(groupedData).forEach(id => {
-        const firstEntry = groupedData[id][0];  // Access the first entry of each ID
-        if (firstEntry) {
-            console.log(`ID: ${id}, Time: ${firstEntry.time}, Data: ${firstEntry.data}, DataLength: ${firstEntry.data.length}`);
-        }
+        const dataArray = groupedData[id].map(entry => entry.data);
+        let resultXORArray = xorAdjacentElementsDirect(dataArray);
+        let valTang=sumBinaryColumns(resultXORArray);
+        console.log(`id: ${id} Tang is ${valTang}`);
       });
-
-      //console.log(content); // 打印到控制台
-      //let hexData = extractAllHexData(content);
-      //console.log(hexData);
-      // 转换为反序的二进制字符串数组
-      //binaryStrings = hexData.map(hexString => hexStringToReversedBinary(hexString));
-      // 输出32位的反序二进制字符串数组
-      //console.log(binaryStrings);
-      // 这里可以对content进行进一步处理，例如显示在页面上或发送到服务器
   };
 
 });
