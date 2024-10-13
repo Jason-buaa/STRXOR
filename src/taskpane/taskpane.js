@@ -27,15 +27,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
       groupedData = extractAndGroupById(logContent);
       console.timeEnd("Processing log");
       
-      const ids = Object.keys(groupedData);
-      console.log("Extracted IDs:", ids);
-// Assuming groupedData is already populated
-      Object.keys(groupedData).forEach(id => {
-        const dataArray = groupedData[id].map(entry => entry.data);
-        let resultXORArray = xorAdjacentElementsDirect(dataArray);
-        let valTang=sumBinaryColumns(resultXORArray);
-        console.log(`id: ${id} Tang is ${valTang}`);
-      });
+
   };
 
 });
@@ -163,37 +155,41 @@ export async function genTang() {
       // 添加一个新的名为"BinaryLog"的工作表
       let sheetTang= sheets.add("TANG");
  // 计算XOR
-      let resultXORArray = xorAdjacentElementsDirect(binaryStrings);
-      console.log(`Result XOR Array:/${resultXORArray}`);
-      let valTang=sumBinaryColumns(resultXORArray);
-      console.log(valTang);
-      const rangeBitheader = sheetTang.getRange("A1:BL1");
-      const tangValuerange = sheetTang.getRange("A2:BL2");
-      // 填充单元格
-      let bitLabels = [];
-      for (let i = 63; i >= 0; i--) {
-        bitLabels.push(`bit${i}`);
-      }
-      
-      // 设置单元格值
-      rangeBitheader.values = [bitLabels];
-      tangValuerange.values=[splitStringIntoSubarrays(valTang).map(Number)];
-      console.log(splitStringIntoSubarrays(valTang));
-
-
-      let dataTangRange = sheetTang.getRange("A1:BL2");
-      let chartTang = sheetTang.charts.add(
-      Excel.ChartType.line, 
-      dataTangRange, 
-      Excel.ChartSeriesBy.auto);
-
-      chartTang.title.text = "TANG";
-      chartTang.legend.position = Excel.ChartLegendPosition.right;
-      chartTang.legend.format.fill.setSolidColor("white");
-      chartTang.dataLabels.format.font.size = 15;
-      chartTang.dataLabels.format.font.color = "black";
-
-
+      const ids = Object.keys(groupedData);
+      console.log("Extracted IDs:", ids);
+// Assuming groupedData is already populated
+      Object.keys(groupedData).forEach((id,index) => {
+        const dataArray = groupedData[id].map(entry => entry.data);
+        let resultXORArray = xorAdjacentElementsDirect(dataArray);
+        let valTang=sumBinaryColumns(resultXORArray);
+        console.log(`id: ${id} Tang is ${valTang}`);
+         // 获取 resultXORArray 的长度
+        const arrayLength = groupedData[id][0].data.length;
+        console.log(`Array Length is ${arrayLength}`);
+        let startRow = 1 + index*2; // 起始行号
+        let endRow = 1 + index*2; // 结束行号
+    
+        let startColIndex = 0; 
+        let endColIndex = arrayLength-1; 
+    
+        // 使用getExcelColumnLabel函数将列索引转换为列字母
+        let startColLetter = getExcelColumnLabel(startColIndex);
+        let endColLetter = getExcelColumnLabel(endColIndex);
+    
+        // 拼接rangeAddress
+        let rangeAddress = `${startColLetter}${startRow}:${endColLetter}${endRow}`;
+        let valueAddress = `${startColLetter}${startRow+1}:${endColLetter}${endRow+1}`;
+        console.log(rangeAddress);  // 输出每次循环生成的rangeAddress
+        console.log(valueAddress);  // 输出每次循环生成的valueAddress
+        let bitLabels = [];
+        for (let i = endColIndex; i >= 0; i--) {
+          bitLabels.push(`bit${i}`);
+        }
+        const rangeBitheader = sheetTang.getRange(rangeAddress);
+        const tangValuerange = sheetTang.getRange(valueAddress);
+        rangeBitheader.values = [bitLabels];
+        tangValuerange.values=[splitStringIntoSubarrays(valTang).map(Number)];        
+      });
 
       await context.sync();
   });
@@ -301,4 +297,14 @@ function hexToBinary(hexStr) {
   }
   
   return binaryStr;
+}
+
+// 将列号转换为Excel列字母，如0 -> A, 1 -> B, ..., 26 -> AA, 27 -> AB
+function getExcelColumnLabel(index) {
+  let label = '';
+  while (index >= 0) {
+      label = String.fromCharCode((index % 26) + 65) + label;
+      index = Math.floor(index / 26) - 1;
+  }
+  return label;
 }
