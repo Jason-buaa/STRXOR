@@ -71,57 +71,8 @@ function extractAllHexData(content) {
 
 Office.onReady(() => {
   document.getElementById("app-body").style.display = "flex";
-  document.getElementById("run").onclick = run;
   document.getElementById("tang").onclick = genTang;
 });
-
-export async function run() {
-  try {
-    await Excel.run(async (context) => {
-      // 获取当前工作簿的所有工作表
-      const sheets = context.workbook.worksheets;
-      sheets.load("items/name");
-  
-      await context.sync();
-  
-      // 检查工作表数量并打印所有工作表的名称
-      if (sheets.items.length > 1) {
-          console.log(`There are ${sheets.items.length} worksheets in the workbook:`);
-      } else {
-          console.log(`There is one worksheet in the workbook:`);
-      }
-  
-      sheets.items.forEach(function (sheet) {
-          console.log(sheet.name);
-      });
-  
-      // 检查是否存在名为"BinaryLog"的工作表
-      let binaryLogSheet = sheets.getItemOrNullObject("BinaryLog");
-      await context.sync();
-  
-      if (!binaryLogSheet.isNullObject) {
-          // 如果存在，则删除它
-          binaryLogSheet.delete();
-      }
-  
-      // 添加一个新的名为"BinaryLog"的工作表
-      let sheetBinaryLog= sheets.add("BinaryLog");
-      const numberOfRows = binaryStrings.length;
-      console.log(`Row indices with ID=64: ${numberOfRows}`);
-      const startCellLog = "A2"; // Starting from cell A1
-      const endCellLog = `A${numberOfRows+1}`; // Calculate the ending cell based on the array length
-      const rangeAddressLog = `${startCellLog}:${endCellLog}`; // Define the range address
-      const rangeLog = sheetBinaryLog.getRange(rangeAddressLog);
-      let stringLogArray= binaryStrings.map(num => [num]);
-      // Set the values of the range with the stringArray
-      rangeLog.numberFormat = '@'; // '@' sets the format to Text
-      rangeLog.values = stringLogArray;
-      await context.sync();
-  });
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 export async function genTang() {
   try {
