@@ -6,67 +6,9 @@
 /* global console, document, Excel, Office */
 
 // The initialize function must be run each time a new page is loaded
-let binaryStrings;
 let logContent;
 let groupedData;
 
-
-document.getElementById('fileInput').addEventListener('change', function(event) {
-  var file = event.target.files[0]; // 获取用户选择的文件
-  if (!file) {
-      return;
-  }
-
-  var reader = new FileReader(); // 创建FileReader对象
-  reader.readAsText(file); // 以文本形式读取文件
-  reader.onload = function(e) {
-  //var content = e.target.result; // 读取文件内容
-  logContent= e.target.result; // 读取文件内容
-      // 运行提取并分组函数
-      console.time("Processing log");
-      groupedData = extractAndGroupById(logContent);
-      console.timeEnd("Processing log");
-      
-
-  };
-
-});
-
-function hexStringToReversedBinary(hexString) {
-  // 移除可能的空格和双引号
-  hexString = hexString.replace(/"/g, '').replace(/\s+/g, '');
-  
-  // 分割字符串为数组，并将每个十六进制数转换为二进制字符串
-  const hexArray = hexString.match(/.{1,2}/g);
-  const binaryArray = hexArray.map(hex => parseInt(hex, 16).toString(2).padStart(8, '0'));
-  
-  // 反序拼接二进制字符串
-  let binaryString = binaryArray.reverse().join('');
-  
-  // 确保二进制字符串是32位长
-  binaryString = binaryString.padStart(32, '0');
-  
-  return binaryString;
-}
-
-function extractAllHexData(content) {
-  // 定义一个正则表达式来匹配每一行中的所有16进制数据
-  const hexPattern = /Tx\s+d\s+8\s+([0-9A-F ]+)/g;
-  // 定义一个数组来存储提取的16进制数据
-  let hexDataArray = [];
-
-  // 使用正则表达式匹配并提取数据
-  let match;
-  while ((match = hexPattern.exec(content)) !== null) {
-    // 移除空格，只保留16进制字符
-    let hexData = match[1].replace(/\s/g, '');
-    // 将匹配到的16进制数据添加到数组中
-    hexDataArray.push(hexData);
-  }
-
-  // 返回提取的16进制数据数组
-  return hexDataArray;
-}
 
 
 Office.onReady(() => {
@@ -262,3 +204,24 @@ function getExcelColumnLabel(index) {
   }
   return label;
 }
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  var file = event.target.files[0]; // 获取用户选择的文件
+  if (!file) {
+      return;
+  }
+
+  var reader = new FileReader(); // 创建FileReader对象
+  reader.readAsText(file); // 以文本形式读取文件
+  reader.onload = function(e) {
+  //var content = e.target.result; // 读取文件内容
+  logContent= e.target.result; // 读取文件内容
+      // 运行提取并分组函数
+      console.time("Processing log");
+      groupedData = extractAndGroupById(logContent);
+      console.timeEnd("Processing log");
+      
+
+  };
+
+});
