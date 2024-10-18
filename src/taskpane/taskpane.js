@@ -166,8 +166,8 @@ export async function genTang() {
          // 获取 resultXORArray 的长度
         const arrayLength = groupedData[id][0].data.length;
         console.log(`Array Length is ${arrayLength}`);
-        let startRow = 1 + index*2; // 起始行号
-        let endRow = 1 + index*2; // 结束行号
+        let startRow = 1 + index*3; // 起始行号
+        let endRow = 1 + index*3; // 结束行号
     
         let startColIndex = 0; 
         let endColIndex = arrayLength-1; 
@@ -177,16 +177,19 @@ export async function genTang() {
         let endColLetter = getExcelColumnLabel(endColIndex);
     
         // 拼接rangeAddress
-        let rangeAddress = `${startColLetter}${startRow}:${endColLetter}${endRow}`;
-        let valueAddress = `${startColLetter}${startRow+1}:${endColLetter}${endRow+1}`;
+        let idAdddress = `${startColLetter}${startRow}`;
+        let rangeAddress = `${startColLetter}${startRow+1}:${endColLetter}${endRow+1}`;
+        let valueAddress = `${startColLetter}${startRow+2}:${endColLetter}${endRow+2}`;
         console.log(rangeAddress);  // 输出每次循环生成的rangeAddress
         console.log(valueAddress);  // 输出每次循环生成的valueAddress
         let bitLabels = [];
         for (let i = endColIndex; i >= 0; i--) {
           bitLabels.push(`bit${i}`);
         }
+        const idheader = sheetTang.getRange(idAdddress);
         const rangeBitheader = sheetTang.getRange(rangeAddress);
         const tangValuerange = sheetTang.getRange(valueAddress);
+        idheader.values=[[`id = ${id}`]];
         rangeBitheader.values = [bitLabels];
         tangValuerange.values=[splitStringIntoSubarrays(valTang).map(Number)];        
       });
