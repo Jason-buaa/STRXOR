@@ -73,6 +73,7 @@ export async function genTang() {
         let idAdddress = `${startColLetter}${startRow}`;
         let rangeAddress = `${startColLetter}${startRow+1}:${endColLetter}${endRow+1}`;
         let valueAddress = `${startColLetter}${startRow+2}:${endColLetter}${endRow+2}`;
+        let chartDataAddress = `${startColLetter}${startRow+1}:${endColLetter}${endRow+2}`;
         console.log(rangeAddress);  // 输出每次循环生成的rangeAddress
         console.log(valueAddress);  // 输出每次循环生成的valueAddress
         let bitLabels = [];
@@ -82,9 +83,20 @@ export async function genTang() {
         const idheader = sheetTang.getRange(idAdddress);
         const rangeBitheader = sheetTang.getRange(rangeAddress);
         const tangValuerange = sheetTang.getRange(valueAddress);
+        const chartRange = sheetTang.getRange(chartDataAddress);
         idheader.values=[[`id = ${id}`]];
         rangeBitheader.values = [bitLabels];
-        tangValuerange.values=[splitStringIntoSubarrays(valTang).map(Number)];        
+        tangValuerange.values=[splitStringIntoSubarrays(valTang).map(Number)];
+        let chart = sheetTang.charts.add(
+          Excel.ChartType.line, 
+          chartRange, 
+          Excel.ChartSeriesBy.auto);
+    
+        chart.title.text = `id = ${id}`;
+        chart.legend.position = Excel.ChartLegendPosition.right;
+        chart.legend.format.fill.setSolidColor("white");
+        chart.dataLabels.format.font.size = 15;
+        chart.dataLabels.format.font.color = "black";        
       });
 
       await context.sync();
